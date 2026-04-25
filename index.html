@@ -12,11 +12,13 @@
       --window-top: #eeeae2;
 
       --text: #1d1d1b;
+      --muted: rgba(29, 29, 27, 0.62);
       --accent: #2a2926;
 
       --line: #ddd6ca;
       --card-bg: rgba(255, 255, 255, 0.34);
       --output-bg: rgba(255, 255, 255, 0.42);
+      --nav-bg: rgba(255, 255, 255, 0.26);
 
       --terminal-font:
         "JetBrains Mono",
@@ -40,6 +42,7 @@
     html {
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
+      scroll-behavior: smooth;
     }
 
     body {
@@ -99,6 +102,15 @@
       background: rgba(255, 255, 255, 0.22);
     }
 
+    .hero-box.modal-open::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(247, 244, 238, 0.58);
+      backdrop-filter: blur(2px);
+      z-index: 2;
+    }
+
     .hero-label {
       position: absolute;
       top: -13px;
@@ -109,6 +121,7 @@
       font-size: 14px;
       letter-spacing: 0.04em;
       font-weight: 500;
+      z-index: 4;
     }
 
     .hero-left,
@@ -200,7 +213,8 @@
       font-weight: 500;
     }
 
-    .contact-info a:hover {
+    .contact-info a:hover,
+    .output-link:hover {
       text-decoration: underline;
       text-decoration-color: var(--accent);
       text-underline-offset: 3px;
@@ -260,7 +274,9 @@
       font-weight: 700;
     }
 
-    .about-list {
+    .about-list,
+    .output-list,
+    .mini-list {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -272,17 +288,21 @@
       font-weight: 500;
     }
 
-    .about-list li {
+    .about-list li,
+    .output-list li,
+    .mini-list li {
       display: flex;
       gap: 10px;
       align-items: flex-start;
     }
 
-    .about-list li::before {
+    .about-list li::before,
+    .output-list li::before,
+    .mini-list li::before {
       content: "-";
       color: var(--accent);
       flex-shrink: 0;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .about-goal {
@@ -322,10 +342,117 @@
       color: var(--text);
     }
 
+    .module-page {
+      position: absolute;
+      inset: 22px;
+      z-index: 3;
+      display: none;
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      background: rgba(247, 244, 238, 0.96);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.10);
+      overflow: hidden;
+      animation: pageIn 0.18s ease-out;
+    }
+
+    .module-page.active {
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .module-page-bar {
+      min-height: 38px;
+      border-bottom: 1px solid var(--line);
+      background: var(--window-top);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 13px 0 15px;
+    }
+
+    .module-page-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .module-page-title::before {
+      content: "./";
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .module-close {
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.3);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .module-close:hover {
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .module-page-body {
+      padding: 21px;
+      overflow: auto;
+    }
+
     .terminal-divider {
       height: 1px;
       background: var(--line);
       margin: 24px 0 14px;
+    }
+
+    .directory-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 13px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--nav-bg);
+    }
+
+    .directory-label {
+      display: none;
+    }
+
+    .directory-button {
+      appearance: none;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+      color: var(--text);
+      cursor: pointer;
+      padding: 7px 11px;
+      font-size: 12.5px;
+      line-height: 1;
+      font-weight: 700;
+      transition:
+        transform 0.16s ease,
+        background 0.16s ease,
+        box-shadow 0.16s ease;
+    }
+
+    .directory-button:hover,
+    .directory-button.active {
+      background: rgba(255, 255, 255, 0.72);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.04);
     }
 
     .command-row {
@@ -395,7 +522,7 @@
     .terminal-output {
       display: none;
       margin-top: 14px;
-      border: 1px dashed var(--accent);
+      border: 1px solid var(--accent);
       border-radius: 10px;
       background: var(--output-bg);
       padding: 19px 21px;
@@ -433,6 +560,14 @@
       font-weight: 800;
     }
 
+    .output-kicker {
+      margin: -4px 0 14px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
     .output-text {
       margin: 0 0 12px;
       color: var(--text);
@@ -441,37 +576,105 @@
       font-weight: 500;
     }
 
-    .output-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 8px;
-      color: var(--text);
-      font-size: 14.5px;
-      line-height: 1.65;
-      font-weight: 500;
-    }
-
-    .output-list li {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .output-list li::before {
-      content: "-";
-      color: var(--accent);
-      flex-shrink: 0;
-      font-weight: 800;
-    }
-
     .output-link {
       color: var(--text);
       text-decoration: underline;
       text-decoration-color: var(--accent);
       text-underline-offset: 4px;
       font-weight: 700;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .content-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .content-card-title {
+      margin: 0 0 9px;
+      font-size: 14.5px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .content-card-meta {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .content-card-text {
+      margin: 0;
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.65;
+      font-weight: 500;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .gallery-item {
+      min-height: 112px;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.12));
+      display: flex;
+      align-items: end;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .ask-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.23);
+    }
+
+    .ask-transcript {
+      display: grid;
+      gap: 10px;
+    }
+
+    .ask-message {
+      display: grid;
+      gap: 5px;
+    }
+
+    .ask-role {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .ask-body {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.68;
+      font-weight: 500;
+      white-space: pre-wrap;
     }
 
     .error-message {
@@ -489,9 +692,7 @@
     }
 
     @keyframes blink {
-      50% {
-        opacity: 0;
-      }
+      50% { opacity: 0; }
     }
 
     @keyframes outputIn {
@@ -505,18 +706,23 @@
       }
     }
 
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: scale(0.985) translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
     @media (max-width: 900px) {
-      body {
-        padding: 16px;
-      }
+      body { padding: 16px; }
 
-      .terminal {
-        width: min(780px, 96vw);
-      }
+      .terminal { width: min(780px, 96vw); }
 
-      .hero-box {
-        grid-template-columns: 1fr;
-      }
+      .hero-box { grid-template-columns: 1fr; }
 
       .hero-left {
         border-right: none;
@@ -524,36 +730,29 @@
       }
 
       .hero-left,
-      .hero-right {
-        padding: 26px 22px;
-      }
+      .hero-right { padding: 26px 22px; }
 
-      .hero-right {
-        align-content: stretch;
-      }
+      .hero-right { align-content: stretch; }
 
-      .pixel-avatar-image {
-        width: 220px;
-      }
+      .pixel-avatar-image { width: 220px; }
 
-      .profile-name {
-        font-size: 28px;
+      .profile-name { font-size: 28px; }
+
+      .content-grid,
+      .gallery-grid { grid-template-columns: 1fr; }
+
+      .module-page {
+        inset: 16px;
       }
     }
 
     @media (max-width: 560px) {
-      body {
-        padding: 14px;
-      }
+      body { padding: 14px; }
 
-      .terminal-content {
-        padding: 18px 13px 15px;
-      }
+      .terminal-content { padding: 18px 13px 15px; }
 
       .hero-left,
-      .hero-right {
-        padding: 22px 16px;
-      }
+      .hero-right { padding: 22px 16px; }
 
       .welcome {
         font-size: 14px;
@@ -565,41 +764,25 @@
         margin-bottom: 16px;
       }
 
-      .pixel-avatar-image {
-        width: 185px;
-      }
+      .pixel-avatar-image { width: 185px; }
 
-      .profile-name {
-        font-size: 24px;
-      }
+      .profile-name { font-size: 24px; }
 
-      .profile-title {
-        font-size: 13px;
-      }
+      .profile-title { font-size: 13px; }
 
       .contact-info a,
-      .contact-label {
-        font-size: 12.5px;
-      }
+      .contact-label { font-size: 12.5px; }
 
       .about-card,
-      .news-card {
-        padding: 18px 16px;
-      }
+      .news-card { padding: 18px 16px; }
 
-      .card-title {
-        font-size: 15.5px;
-      }
+      .card-title { font-size: 15.5px; }
 
       .about-lead,
       .about-goal,
-      .about-section-label {
-        font-size: 13px;
-      }
+      .about-section-label { font-size: 13px; }
 
-      .about-list {
-        font-size: 12.8px;
-      }
+      .about-list { font-size: 12.8px; }
 
       .news-list li {
         grid-template-columns: 1fr;
@@ -607,47 +790,56 @@
         font-size: 12.8px;
       }
 
+      .directory-row {
+        padding: 9px;
+        gap: 7px;
+      }
+
+      .directory-button {
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+
       .command-row,
       .command-text,
-      .command-placeholder {
-        font-size: 13.5px;
-      }
+      .command-placeholder { font-size: 13.5px; }
 
       .input-cursor {
         width: 9px;
         height: 18px;
       }
 
-      .terminal-output {
+      .terminal-output { padding: 16px 14px; }
+
+      .output-title { font-size: 16px; }
+
+      .output-text,
+      .output-list,
+      .ask-body { font-size: 13px; }
+
+      .module-page {
+        inset: 10px;
+      }
+
+      .module-page-body {
         padding: 16px 14px;
       }
 
-      .output-title {
-        font-size: 16px;
-      }
-
-      .output-text,
-      .output-list {
-        font-size: 13px;
-      }
-
-      .error-message {
-        font-size: 12px;
-      }
+      .error-message { font-size: 12px; }
     }
   </style>
 </head>
 
 <body>
   <main class="terminal">
-    <div class="terminal-bar">
+    <div class="terminal-bar" aria-hidden="true">
       <div class="dot red"></div>
       <div class="dot yellow"></div>
       <div class="dot green"></div>
     </div>
 
     <section class="terminal-content">
-      <div class="hero-box">
+      <div class="hero-box" id="heroBox">
         <div class="hero-label">------ Welcome ------</div>
 
         <div class="hero-left">
@@ -720,9 +912,26 @@
             </ul>
           </article>
         </div>
+
+        <section class="module-page" id="modulePage" aria-live="polite" aria-hidden="true">
+          <div class="module-page-bar">
+            <p class="module-page-title" id="modulePageTitle">project</p>
+            <button class="module-close" id="moduleClose" type="button" aria-label="Close page">×</button>
+          </div>
+          <div class="module-page-body" id="modulePageBody"></div>
+        </section>
       </div>
 
       <div class="terminal-divider"></div>
+
+      <nav class="directory-row" aria-label="Website directory">
+        <button class="directory-button" type="button" data-open="project">project</button>
+        <button class="directory-button" type="button" data-open="publication">publication</button>
+        <button class="directory-button" type="button" data-open="blog">blog</button>
+        <button class="directory-button" type="button" data-open="cv">CV</button>
+        <button class="directory-button" type="button" data-open="news">news</button>
+        <button class="directory-button" type="button" data-open="gallery">gallery</button>
+      </nav>
 
       <div class="command-row" id="commandRow">
         <span class="prompt-symbol">&gt;</span>
@@ -730,7 +939,7 @@
         <div class="fake-input">
           <span id="commandText" class="command-text"></span>
           <span id="commandPlaceholder" class="command-placeholder">
-            type "project", "publication", "cv", or "blog"
+            ask anything about Jingyi...
           </span>
           <span class="input-cursor"></span>
         </div>
@@ -746,34 +955,68 @@
       </div>
 
       <div id="errorMessage" class="error-message">
-        Command not found. Try: project, publication, cv, or blog.
+        Please type a question about Jingyi, then press Enter.
       </div>
 
-      <div id="terminalOutput" class="terminal-output"></div>
+      <div id="terminalOutput" class="terminal-output">
+        <div class="ask-transcript" id="askTranscript">
+          <div class="ask-message">
+            <div class="ask-role">Jingyi.exe</div>
+            <p class="ask-body">Ask me anything about Jingyi's research, education, projects, publications, CV, interests, or website content.</p>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <script>
+    const heroBox = document.getElementById("heroBox");
     const commandRow = document.getElementById("commandRow");
     const commandInput = document.getElementById("commandInput");
     const commandText = document.getElementById("commandText");
     const commandPlaceholder = document.getElementById("commandPlaceholder");
     const errorMessage = document.getElementById("errorMessage");
     const terminalOutput = document.getElementById("terminalOutput");
+    const directoryButtons = document.querySelectorAll(".directory-button");
+    const modulePage = document.getElementById("modulePage");
+    const modulePageTitle = document.getElementById("modulePageTitle");
+    const modulePageBody = document.getElementById("modulePageBody");
+    const moduleClose = document.getElementById("moduleClose");
+
+    let activeKey = null;
 
     const modules = {
       project: {
         title: "Project",
         html: `
           <h2 class="output-title">Project</h2>
+          <p class="output-kicker">research / engineering / experiments</p>
           <p class="output-text">
             Selected research and development projects will be listed here.
           </p>
-          <ul class="output-list">
-            <li>Physics-informed machine learning for crystal generation</li>
-            <li>Inverse design workflow for two-dimensional materials</li>
-            <li>Agentic simulation pipeline for high-fidelity materials modeling</li>
-          </ul>
+          <div class="content-grid">
+            <article class="content-card">
+              <h3 class="content-card-title">Physics-informed crystal generation</h3>
+              <p class="content-card-meta">AI for Science · Materials discovery</p>
+              <p class="content-card-text">
+                Interpretable physics-informed machine learning models for accelerated crystal generation.
+              </p>
+            </article>
+            <article class="content-card">
+              <h3 class="content-card-title">Performance-driven inverse design</h3>
+              <p class="content-card-meta">Inverse design · 2D materials</p>
+              <p class="content-card-text">
+                A workflow for discovering materials candidates based on target performance constraints.
+              </p>
+            </article>
+            <article class="content-card">
+              <h3 class="content-card-title">Agentic simulation pipeline</h3>
+              <p class="content-card-meta">Agents · High-fidelity simulation</p>
+              <p class="content-card-text">
+                Agentic approaches for accelerating high-fidelity materials modeling and simulation loops.
+              </p>
+            </article>
+          </div>
         `
       },
 
@@ -781,6 +1024,7 @@
         title: "Publication",
         html: `
           <h2 class="output-title">Publication</h2>
+          <p class="output-kicker">papers / preprints / manuscripts</p>
           <p class="output-text">
             Publications, manuscripts, and preprints will be added here.
           </p>
@@ -794,12 +1038,13 @@
         title: "CV",
         html: `
           <h2 class="output-title">CV</h2>
+          <p class="output-kicker">education / research / skills</p>
           <p class="output-text">
-            My CV will be available here.
+            My CV will be available here. Replace the placeholder link with your actual PDF path.
           </p>
           <ul class="output-list">
             <li>
-              <a class="output-link" href="#" target="_blank" rel="noopener">
+              <a class="output-link" href="Jingyi_Zhou_CV.pdf" target="_blank" rel="noopener">
                 Download CV
               </a>
             </li>
@@ -811,38 +1056,213 @@
         title: "Blog",
         html: `
           <h2 class="output-title">Blog</h2>
+          <p class="output-kicker">notes / research thoughts / PhD life</p>
           <p class="output-text">
             Notes and short writings on research, AI for Science, materials design,
             and PhD life will appear here.
           </p>
+          <div class="content-grid">
+            <article class="content-card">
+              <h3 class="content-card-title">Coming soon</h3>
+              <p class="content-card-meta">Draft</p>
+              <p class="content-card-text">Add your first short post here.</p>
+            </article>
+          </div>
+        `
+      },
+
+      news: {
+        title: "News",
+        html: `
+          <h2 class="output-title">News</h2>
+          <p class="output-kicker">updates / milestones</p>
           <ul class="output-list">
-            <li>Coming soon.</li>
+            <li><strong>2026.01</strong> Personal website under construction.</li>
+            <li><strong>2025.08</strong> Started my PhD journey in UA AEM.</li>
+            <li><strong>Coming</strong> Research updates and project notes will be added here.</li>
           </ul>
+        `
+      },
+
+      gallery: {
+        title: "Gallery",
+        html: `
+          <h2 class="output-title">Gallery</h2>
+          <p class="output-kicker">research snapshots / life / visual archive</p>
+          <p class="output-text">
+            A small visual archive for research figures, travel, campus life, or things that inspire you.
+          </p>
+          <div class="gallery-grid">
+            <div class="gallery-item">image placeholder 01</div>
+            <div class="gallery-item">image placeholder 02</div>
+            <div class="gallery-item">image placeholder 03</div>
+          </div>
         `
       }
     };
 
-    const aliases = {
-      "1": "project",
-      "project": "project",
-      "projects": "project",
+    // ============================================================
+    // Free local ask engine
+    // Edit this section to deploy your prepared questions, answers,
+    // keywords, and response style. No API key. No backend cost.
+    // ============================================================
 
-      "2": "publication",
-      "publication": "publication",
-      "publications": "publication",
-      "paper": "publication",
-      "papers": "publication",
-
-      "3": "cv",
-      "resume": "cv",
-
-      "4": "blog",
-      "blogs": "blog",
-      "博客": "blog"
+    const ASK_STYLE = {
+      botName: "Jingyi.exe",
+      prefix: "",
+      suffix: "",
+      fallback: "I do not have enough information about that yet. Try asking about Jingyi's research, education, projects, publications, CV, contact, or interests.",
+      help: "You can ask me about Jingyi's research, education, projects, publications, CV, contact, news, gallery, or personal interests. For example: 'What is Jingyi's research about?' or 'Where is Jingyi studying?'"
     };
+
+    const LOCAL_QA_BANK = [
+      {
+        id: "research",
+        title: "Research",
+        keywords: [
+          "research", "研究", "research direction", "ai for science", "materials", "material", "crystal", "crystal generation", "inverse design", "physics-informed", "simulation"
+        ],
+        questions: [
+          "what is jingyi's research about",
+          "what does jingyi study",
+          "what is your research focus",
+          "你的研究方向是什么",
+          "你做什么研究"
+        ],
+        answer: "Jingyi's research focuses on AI for Science, especially interpretable physics-informed machine learning for accelerated crystal generation, performance-driven inverse design for materials discovery, and agentic approaches for high-fidelity simulations.",
+        relatedModules: ["project", "publication"]
+      },
+      {
+        id: "education",
+        title: "Education",
+        keywords: [
+          "education", "教育", "phd", "ph.d", "doctor", "university", "ua", "alabama", "aerospace", "aem", "advisor", "supervisor", "导师", "博士"
+        ],
+        questions: [
+          "where is jingyi studying",
+          "who is jingyi's advisor",
+          "where do you study",
+          "你的导师是谁",
+          "你在哪里读博士"
+        ],
+        answer: "Jingyi is a first-year PhD student in Aerospace Engineering and Mechanics at The University of Alabama, advised by Chongze Hu.",
+        relatedModules: ["cv"]
+      },
+      {
+        id: "goal",
+        title: "Goal",
+        keywords: [
+          "goal", "vision", "mission", "目标", "愿景", "physical ai", "materials design", "future"
+        ],
+        questions: [
+          "what is jingyi's goal",
+          "what is your long-term goal",
+          "你的目标是什么",
+          "你的研究愿景是什么"
+        ],
+        answer: "Her goal is to build powerful physical AI systems that accelerate materials design and push beyond current boundaries of materials applications.",
+        relatedModules: ["project"]
+      },
+      {
+        id: "contact",
+        title: "Contact",
+        keywords: [
+          "contact", "email", "mail", "联系", "邮箱", "reach", "message"
+        ],
+        questions: [
+          "how can i contact jingyi",
+          "what is jingyi's email",
+          "怎么联系你",
+          "你的邮箱是什么"
+        ],
+        answer: "You can contact Jingyi at jzhou47@crimson.ua.edu or jingyizhou0112@gmail.com.",
+        relatedModules: ["cv"]
+      },
+      {
+        id: "publication",
+        title: "Publication",
+        keywords: [
+          "publication", "publications", "paper", "papers", "preprint", "manuscript", "论文", "发表", "文章"
+        ],
+        questions: [
+          "does jingyi have publications",
+          "where are your papers",
+          "你的论文在哪里",
+          "你有发表吗"
+        ],
+        answer: "Publications, manuscripts, and preprints will be added to the website soon.",
+        relatedModules: ["publication"]
+      },
+      {
+        id: "project",
+        title: "Project",
+        keywords: [
+          "project", "projects", "work", "portfolio", "项目", "作品", "crystal generation", "inverse design", "agentic simulation"
+        ],
+        questions: [
+          "what projects is jingyi working on",
+          "tell me about your projects",
+          "你有什么项目",
+          "你现在在做哪些项目"
+        ],
+        answer: "Current project areas include physics-informed crystal generation, inverse design workflows for two-dimensional materials, and agentic simulation pipelines for high-fidelity materials modeling.",
+        relatedModules: ["project"]
+      },
+      {
+        id: "cv",
+        title: "CV",
+        keywords: [
+          "cv", "resume", "简历", "履历", "curriculum vitae"
+        ],
+        questions: [
+          "where is jingyi's cv",
+          "can i see your resume",
+          "你的简历在哪里"
+        ],
+        answer: "You can open the CV page from the navigation bar. A downloadable PDF link will be available there once Jingyi uploads the file.",
+        relatedModules: ["cv"]
+      },
+      {
+        id: "interest",
+        title: "Interests",
+        keywords: [
+          "interest", "interests", "hobby", "hobbies", "兴趣", "爱好", "outside research", "personal"
+        ],
+        questions: [
+          "what are jingyi's interests",
+          "what do you like outside research",
+          "你的兴趣爱好是什么"
+        ],
+        answer: "This part is still under construction. Jingyi will add more about her interests, reading, creative work, and life outside research soon.",
+        relatedModules: ["blog", "gallery"]
+      },
+      {
+        id: "help",
+        title: "Help",
+        keywords: [
+          "help", "menu", "what can you answer", "你能回答什么", "帮助", "怎么问"
+        ],
+        questions: [
+          "what can you answer",
+          "help",
+          "你能回答什么"
+        ],
+        answer: ASK_STYLE.help,
+        relatedModules: ["project", "publication", "cv", "blog"]
+      }
+    ];
 
     function normalizeCommand(value) {
       return value.trim().toLowerCase();
+    }
+
+    function escapeHTML(value) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function syncCommandView() {
@@ -851,37 +1271,146 @@
       commandPlaceholder.style.display = value.length > 0 ? "none" : "inline";
     }
 
-    function printOutput(command, key) {
-      const module = modules[key];
-
-      terminalOutput.innerHTML = `
-        <p class="output-command"><span>&gt;</span> ${command}</p>
-        ${module.html}
-      `;
-
-      terminalOutput.classList.remove("active");
-
-      requestAnimationFrame(() => {
-        terminalOutput.classList.add("active");
+    function setActiveButton(key) {
+      directoryButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.open === key);
       });
     }
 
-    function runCommand(command) {
-      const normalized = normalizeCommand(command);
-      const key = aliases[normalized];
+    function openModule(key) {
+      const module = modules[key];
+      if (!module) return;
 
-      if (!key || !modules[key]) {
+      activeKey = key;
+      errorMessage.classList.remove("active");
+      terminalOutput.classList.remove("active");
+      modulePageTitle.textContent = module.title;
+      modulePageBody.innerHTML = module.html;
+      modulePage.classList.add("active");
+      modulePage.setAttribute("aria-hidden", "false");
+      heroBox.classList.add("modal-open");
+      setActiveButton(key);
+      commandInput.focus();
+    }
+
+    function closeModule() {
+      activeKey = null;
+      modulePage.classList.remove("active");
+      modulePage.setAttribute("aria-hidden", "true");
+      heroBox.classList.remove("modal-open");
+      setActiveButton(null);
+      commandInput.focus();
+    }
+
+    function scoreQA(question, item) {
+      const normalizedQuestion = normalizeCommand(question);
+      let score = 0;
+
+      item.questions.forEach((sampleQuestion) => {
+        const normalizedSample = normalizeCommand(sampleQuestion);
+        if (normalizedQuestion === normalizedSample) score += 8;
+        if (normalizedQuestion.includes(normalizedSample)) score += 5;
+      });
+
+      item.keywords.forEach((keyword) => {
+        const normalizedKeyword = normalizeCommand(keyword);
+        if (normalizedQuestion.includes(normalizedKeyword)) {
+          score += normalizedKeyword.length > 4 ? 3 : 2;
+        }
+      });
+
+      return score;
+    }
+
+    function formatAnswer(item) {
+      const related = item.relatedModules?.length
+        ? `
+
+Related pages: ${item.relatedModules.map((module) => `[${module}]`).join(" ")}`
+        : "";
+
+      return `${ASK_STYLE.prefix}${item.answer}${related}${ASK_STYLE.suffix}`.trim();
+    }
+
+    function localAsk(question) {
+      const normalizedQuestion = normalizeCommand(question);
+
+      if (!normalizedQuestion) return ASK_STYLE.fallback;
+
+      let bestMatch = null;
+      let bestScore = 0;
+
+      LOCAL_QA_BANK.forEach((item) => {
+        const score = scoreQA(normalizedQuestion, item);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = item;
+        }
+      });
+
+      if (bestMatch && bestScore >= 2) {
+        return formatAnswer(bestMatch);
+      }
+
+      return ASK_STYLE.fallback;
+    }
+
+    async function askJingyi(question) {
+      return localAsk(question);
+    }
+
+    function ensureAskOutput() {
+      terminalOutput.classList.add("active");
+      errorMessage.classList.remove("active");
+    }
+
+    function appendAskMessage(role, body) {
+      const askTranscript = document.getElementById("askTranscript");
+      if (!askTranscript) return null;
+
+      const message = document.createElement("div");
+      message.className = "ask-message";
+      message.innerHTML = `
+        <div class="ask-role">${escapeHTML(role)}</div>
+        <p class="ask-body">${escapeHTML(body)}</p>
+      `;
+      askTranscript.appendChild(message);
+      return message;
+    }
+
+    async function handleAsk(question) {
+      const cleanQuestion = question.trim();
+
+      if (!cleanQuestion) {
         errorMessage.classList.add("active");
-        terminalOutput.classList.remove("active");
         return;
       }
 
-      errorMessage.classList.remove("active");
-      printOutput(normalized, key);
+      closeModule();
+      ensureAskOutput();
+      appendAskMessage("visitor", cleanQuestion);
+      const thinkingMessage = appendAskMessage(ASK_STYLE.botName, "thinking...");
 
-      commandInput.value = "";
-      syncCommandView();
+      try {
+        const answer = await askJingyi(cleanQuestion);
+        if (thinkingMessage) {
+          thinkingMessage.querySelector(".ask-body").textContent = answer;
+        }
+      } catch (error) {
+        if (thinkingMessage) {
+          thinkingMessage.querySelector(".ask-body").textContent = "The local ask engine is not available right now. Please try again later.";
+        }
+      }
     }
+
+    directoryButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        openModule(button.dataset.open);
+      });
+    });
+
+    moduleClose.addEventListener("click", closeModule);
 
     commandRow.addEventListener("click", function () {
       commandInput.focus();
@@ -889,19 +1418,20 @@
 
     commandInput.addEventListener("input", function () {
       syncCommandView();
-
-      const command = normalizeCommand(commandInput.value);
-
-      if (aliases[command]) {
-        runCommand(command);
-      } else {
-        errorMessage.classList.remove("active");
-      }
+      errorMessage.classList.remove("active");
     });
 
     commandInput.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
-        runCommand(commandInput.value);
+        handleAsk(commandInput.value);
+        commandInput.value = "";
+        syncCommandView();
+      }
+
+      if (event.key === "Escape") {
+        closeModule();
+        commandInput.value = "";
+        syncCommandView();
       }
     });
 
