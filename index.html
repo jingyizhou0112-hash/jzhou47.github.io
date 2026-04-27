@@ -183,13 +183,13 @@
     }
 
     .pixel-avatar-image {
-      width: 230px;
-      max-width: 100%;
+      width: 250px;
+      max-width: 88%;
       height: auto;
       display: block;
       object-fit: contain;
-      image-rendering: pixelated;
-      filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.08));
+      image-rendering: auto;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
     }
 
     .profile-info {
@@ -796,7 +796,7 @@
 
       .hero-right { align-content: stretch; }
 
-      .pixel-avatar-image { width: 220px; }
+      .pixel-avatar-image { width: 235px; }
 
       .profile-name { font-size: 28px; }
 
@@ -830,7 +830,7 @@
         margin-bottom: 16px;
       }
 
-      .pixel-avatar-image { width: 185px; }
+      .pixel-avatar-image { width: 210px; }
 
       .profile-name { font-size: 24px; }
 
@@ -1190,6 +1190,23 @@
     };
 
     const LOCAL_QA_BANK = [
+      {
+        id: "identity",
+        title: "Identity",
+        keywords: [
+          "jingyi", "jingyi zhou", "zhou", "who is jingyi", "about jingyi", "about you", "yourself", "self introduction", "介绍", "自我介绍", "你是谁", "你叫什么"
+        ],
+        questions: [
+          "who is jingyi",
+          "who is jingyi zhou",
+          "tell me about jingyi",
+          "tell me about yourself",
+          "你是谁",
+          "介绍一下你自己"
+        ],
+        answer: "Jingyi Zhou is a first-year PhD student in Aerospace Engineering and Mechanics at The University of Alabama. Her research focuses on AI for Science, especially physics-informed machine learning, materials discovery, inverse design, and agentic simulation workflows.",
+        relatedModules: ["project", "cv", "publication"]
+      },
       {
         id: "research",
         title: "Research",
